@@ -1,0 +1,33 @@
+{
+  "name": "easy-sheets",
+  "version": "1.0.0",
+  "description": "A typed, async library to access Google Sheets.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/e10jc/easy-sheets.git"
+  },
+  "keywords": [
+    "google",
+    "sheets"
+  ],
+  "author": "e10jc",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/e10jc/easy-sheets/issues"
+  },
+  "homepage": "https://github.com/e10jc/easy-sheets#readme",
+  "dependencies": {
+    "googleapis": "^39.2.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.15",
+    "jest": "^24.8.0",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.5.2"
+  }
+}
