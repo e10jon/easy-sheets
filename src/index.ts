@@ -25,6 +25,16 @@ export default class EasySheets {
     this.serviceAccountCreds = JSON.parse(Buffer.from(creds64, 'base64').toString()) as ServiceAccountCreds
   }
 
+  public addRow = async (values: any[]): Promise<boolean> => {
+    await this.sheets.spreadsheets.values.append({
+      range: 'A1:A5000000',
+      requestBody: {values: [values]},
+      spreadsheetId: this.sheetId,
+      valueInputOption: 'RAW',
+    })
+    return true
+  }
+
   public authorize = async (): Promise<boolean> => {
     const oauth2Client = new google.auth.JWT({
       email: this.serviceAccountCreds.client_email,
@@ -43,7 +53,15 @@ export default class EasySheets {
     return true
   }
 
-  public getRange = async (range: string) => {
+  public clearRange = async (range: string): Promise<boolean> => {
+    await this.sheets.spreadsheets.values.clear({
+      range,
+      spreadsheetId: this.sheetId,
+    })
+    return true
+  }
+
+  public getRange = async (range: string): Promise<any[][]> => {
     const {data: {values}} = await this.sheets.spreadsheets.values.get({
       range,
       spreadsheetId: this.sheetId,
@@ -51,7 +69,7 @@ export default class EasySheets {
     return values
   }
 
-  public updateRange = async (range: string, values: any) => {
+  public updateRange = async (range: string, values: any[][]): Promise<boolean> => {
     await this.sheets.spreadsheets.values.update({
       range,
       requestBody: {values},
