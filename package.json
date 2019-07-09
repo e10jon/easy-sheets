@@ -1,6 +1,6 @@
 {
   "name": "easy-sheets",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A typed, async library to access Google Sheets.",
   "main": "dist/index.js",
   "scripts": {

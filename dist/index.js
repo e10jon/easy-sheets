@@ -9,7 +9,7 @@ class EasySheets {
                 range: 'A1:A5000000',
                 requestBody: { values: [values] },
                 spreadsheetId: this.sheetId,
-                valueInputOption: 'RAW',
+                valueInputOption: 'USER_ENTERED',
             });
             return true;
         };
@@ -46,7 +46,7 @@ class EasySheets {
                 range,
                 requestBody: { values },
                 spreadsheetId: this.sheetId,
-                valueInputOption: 'RAW',
+                valueInputOption: 'USER_ENTERED',
             });
             return true;
         };
