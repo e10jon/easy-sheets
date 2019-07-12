@@ -2,9 +2,9 @@
   "name": "easy-sheets",
   "version": "1.0.2",
   "description": "A typed, async library to access Google Sheets.",
-  "main": "dist/src/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "jest --setupFiles dotenv/config",
+    "test": "jest",
     "prepublish": "tsc"
   },
   "repository": {
