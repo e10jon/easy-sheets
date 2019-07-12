@@ -21,5 +21,5 @@ import EasySheets from 'easy-sheets'
 const easySheets = new EasySheets(SHEET_ID, BASE64_CREDS)
 
 # now do whatever you want
-await EasySheets.addRow(['this', 'was easy'])
+await easySheets.addRow(['this', 'was easy'])
 ```
