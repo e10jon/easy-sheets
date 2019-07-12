@@ -2,7 +2,7 @@ import { sheets_v4 } from 'googleapis';
 export default class EasySheets {
     private serviceAccountCreds;
     private sheetId;
-    private sheets?;
+    sheets?: sheets_v4.Sheets;
     constructor(sheetId: string, creds64: string);
     addRow: (values: any[]) => Promise<boolean>;
     authorize: () => Promise<sheets_v4.Sheets>;
