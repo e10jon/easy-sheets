@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const googleapis_1 = require("googleapis");
+const lodash_1 = require("lodash");
 const util_1 = require("util");
 class EasySheets {
     constructor(sheetId, creds64) {
@@ -38,13 +39,24 @@ class EasySheets {
             });
             return true;
         };
-        this.getRange = async (range) => {
+        this.getRange = async (range, opts) => {
             const sheets = await this.authorize();
             const { data: { values } } = await sheets.spreadsheets.values.get({
                 range,
                 spreadsheetId: this.sheetId,
             });
-            return values;
+            if (opts && opts.headerRow && values) {
+                const headerKeys = opts.headerRow === 'raw' ? values[0] : values[0].map(lodash_1.camelCase);
+                return values.slice(1).map(row => {
+                    return headerKeys.reduce((obj, header, i) => {
+                        obj[header] = row[i];
+                        return obj;
+                    }, {});
+                });
+            }
+            else {
+                return values;
+            }
         };
         this.updateRange = async (range, values) => {
             const sheets = await this.authorize();

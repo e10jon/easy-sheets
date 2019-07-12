@@ -7,6 +7,8 @@ export default class EasySheets {
     addRow: (values: any[]) => Promise<boolean>;
     authorize: () => Promise<sheets_v4.Sheets>;
     clearRange: (range: string) => Promise<boolean>;
-    getRange: (range: string) => Promise<any[][] | undefined>;
+    getRange: (range: string, opts?: {
+        headerRow: boolean | "raw";
+    } | undefined) => Promise<any[][] | undefined>;
     updateRange: (range: string, values: any[][]) => Promise<boolean>;
 }
