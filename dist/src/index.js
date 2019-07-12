@@ -5,7 +5,8 @@ const util_1 = require("util");
 class EasySheets {
     constructor(sheetId, creds64) {
         this.addRow = async (values) => {
-            await this.sheets.spreadsheets.values.append({
+            const sheets = await this.authorize();
+            await sheets.spreadsheets.values.append({
                 range: 'A1:A5000000',
                 requestBody: { values: [values] },
                 spreadsheetId: this.sheetId,
@@ -14,35 +15,40 @@ class EasySheets {
             return true;
         };
         this.authorize = async () => {
-            const oauth2Client = new googleapis_1.google.auth.JWT({
-                email: this.serviceAccountCreds.client_email,
-                key: this.serviceAccountCreds.private_key,
-                scopes: ['https://spreadsheets.google.com/feeds'],
-            });
-            const authorize = util_1.promisify(oauth2Client.authorize).bind(oauth2Client);
-            await authorize();
-            this.sheets = googleapis_1.google.sheets({
-                auth: oauth2Client,
-                version: 'v4',
-            });
-            return true;
+            if (!this.sheets) {
+                const oauth2Client = new googleapis_1.google.auth.JWT({
+                    email: this.serviceAccountCreds.client_email,
+                    key: this.serviceAccountCreds.private_key,
+                    scopes: ['https://spreadsheets.google.com/feeds'],
+                });
+                const authorize = util_1.promisify(oauth2Client.authorize).bind(oauth2Client);
+                await authorize();
+                this.sheets = googleapis_1.google.sheets({
+                    auth: oauth2Client,
+                    version: 'v4',
+                });
+            }
+            return this.sheets;
         };
         this.clearRange = async (range) => {
-            await this.sheets.spreadsheets.values.clear({
+            const sheets = await this.authorize();
+            await sheets.spreadsheets.values.clear({
                 range,
                 spreadsheetId: this.sheetId,
             });
             return true;
         };
         this.getRange = async (range) => {
-            const { data: { values } } = await this.sheets.spreadsheets.values.get({
+            const sheets = await this.authorize();
+            const { data: { values } } = await sheets.spreadsheets.values.get({
                 range,
                 spreadsheetId: this.sheetId,
             });
             return values;
         };
         this.updateRange = async (range, values) => {
-            await this.sheets.spreadsheets.values.update({
+            const sheets = await this.authorize();
+            await sheets.spreadsheets.values.update({
                 range,
                 requestBody: { values },
                 spreadsheetId: this.sheetId,

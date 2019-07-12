@@ -18,7 +18,8 @@ interface ServiceAccountCreds {
 export default class EasySheets {
   private serviceAccountCreds: ServiceAccountCreds
   private sheetId: string
-  private sheets: sheets_v4.Sheets
+
+  private sheets?: sheets_v4.Sheets
 
   public constructor(sheetId: string, creds64: string) {
     this.sheetId = sheetId
@@ -26,9 +27,9 @@ export default class EasySheets {
   }
 
   public addRow = async (values: any[]): Promise<boolean> => {
-    await this.ensureAuthorization()
+    const sheets = await this.authorize()
 
-    await this.sheets.spreadsheets.values.append({
+    await sheets.spreadsheets.values.append({
       range: 'A1:A5000000',
       requestBody: {values: [values]},
       spreadsheetId: this.sheetId,
@@ -37,44 +38,40 @@ export default class EasySheets {
     return true
   }
 
-  public authorize = async (): Promise<boolean> => {
-    const oauth2Client = new google.auth.JWT({
-      email: this.serviceAccountCreds.client_email,
-      key: this.serviceAccountCreds.private_key,
-      scopes: ['https://spreadsheets.google.com/feeds'],
-    } as JWTOptions)
+  public authorize = async (): Promise<sheets_v4.Sheets> => {
+    if (!this.sheets) {
+      const oauth2Client = new google.auth.JWT({
+        email: this.serviceAccountCreds.client_email,
+        key: this.serviceAccountCreds.private_key,
+        scopes: ['https://spreadsheets.google.com/feeds'],
+      } as JWTOptions)
 
-    const authorize = promisify(oauth2Client.authorize).bind(oauth2Client)
-    await authorize()
+      const authorize = promisify(oauth2Client.authorize).bind(oauth2Client)
+      await authorize()
 
-    this.sheets = google.sheets({
-      auth: oauth2Client,
-      version: 'v4',
-    })
+      this.sheets = google.sheets({
+        auth: oauth2Client,
+        version: 'v4',
+      })
+    }
 
-    return true
+    return this.sheets
   }
 
   public clearRange = async (range: string): Promise<boolean> => {
-    await this.ensureAuthorization()
+    const sheets = await this.authorize()
 
-    await this.sheets.spreadsheets.values.clear({
+    await sheets.spreadsheets.values.clear({
       range,
       spreadsheetId: this.sheetId,
     })
     return true
   }
 
-  public ensureAuthorization = async () => {
-    if (!this.sheets) {
-      await this.authorize()
-    }
-  }
+  public getRange = async (range: string): Promise<any[][] | undefined> => {
+    const sheets = await this.authorize()
 
-  public getRange = async (range: string): Promise<any[][]> => {
-    await this.ensureAuthorization()
-
-    const {data: {values}} = await this.sheets.spreadsheets.values.get({
+    const {data: {values}} = await sheets.spreadsheets.values.get({
       range,
       spreadsheetId: this.sheetId,
     })
@@ -82,9 +79,9 @@ export default class EasySheets {
   }
 
   public updateRange = async (range: string, values: any[][]): Promise<boolean> => {
-    await this.ensureAuthorization()
+    const sheets = await this.authorize()
 
-    await this.sheets.spreadsheets.values.update({
+    await sheets.spreadsheets.values.update({
       range,
       requestBody: {values},
       spreadsheetId: this.sheetId,
