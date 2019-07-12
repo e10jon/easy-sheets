@@ -26,6 +26,8 @@ export default class EasySheets {
   }
 
   public addRow = async (values: any[]): Promise<boolean> => {
+    await this.ensureAuthorization()
+
     await this.sheets.spreadsheets.values.append({
       range: 'A1:A5000000',
       requestBody: {values: [values]},
@@ -54,6 +56,8 @@ export default class EasySheets {
   }
 
   public clearRange = async (range: string): Promise<boolean> => {
+    await this.ensureAuthorization()
+
     await this.sheets.spreadsheets.values.clear({
       range,
       spreadsheetId: this.sheetId,
@@ -61,7 +65,15 @@ export default class EasySheets {
     return true
   }
 
+  public ensureAuthorization = async () => {
+    if (!this.sheets) {
+      await this.authorize()
+    }
+  }
+
   public getRange = async (range: string): Promise<any[][]> => {
+    await this.ensureAuthorization()
+
     const {data: {values}} = await this.sheets.spreadsheets.values.get({
       range,
       spreadsheetId: this.sheetId,
@@ -70,6 +82,8 @@ export default class EasySheets {
   }
 
   public updateRange = async (range: string, values: any[][]): Promise<boolean> => {
+    await this.ensureAuthorization()
+
     await this.sheets.spreadsheets.values.update({
       range,
       requestBody: {values},

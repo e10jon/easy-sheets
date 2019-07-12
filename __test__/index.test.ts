@@ -4,7 +4,6 @@ const {SHEET_ID, CREDS} = process.env
 
 test('clearRange, updateValues, addRow, and getValues', async () => {
   const easySheets = new EasySheets(SHEET_ID, CREDS)
-  await easySheets.authorize()
 
   expect(await easySheets.clearRange('A1:A5000000')).toBe(true)
   expect(await easySheets.updateRange('A1:A2', [['1'], ['2']])).toBe(true)
