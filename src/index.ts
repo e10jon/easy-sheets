@@ -1,5 +1,6 @@
 import {google, sheets_v4} from 'googleapis'
 import {JWTOptions} from 'google-auth-library'
+import {camelCase} from 'lodash'
 import {promisify} from 'util'
 
 interface ServiceAccountCreds {
@@ -68,14 +69,26 @@ export default class EasySheets {
     return true
   }
 
-  public getRange = async (range: string): Promise<any[][] | undefined> => {
+  public getRange = async (range: string, opts?: {headerRow: boolean | 'raw'}): Promise<any[][] | undefined> => {
     const sheets = await this.authorize()
 
     const {data: {values}} = await sheets.spreadsheets.values.get({
       range,
       spreadsheetId: this.sheetId,
     })
-    return values
+
+    if (opts && opts.headerRow && values) {
+      const headerKeys = opts.headerRow === 'raw' ? values[0] : values[0].map(camelCase)
+
+      return values.slice(1).map(row => {
+        return headerKeys.reduce((obj, header, i) => {
+          obj[header] = row[i]
+          return obj
+        }, {})
+      })
+    } else {
+      return values
+    }
   }
 
   public updateRange = async (range: string, values: any[][]): Promise<boolean> => {

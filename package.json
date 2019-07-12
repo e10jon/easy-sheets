@@ -22,10 +22,12 @@
   },
   "homepage": "https://github.com/e10jc/easy-sheets#readme",
   "dependencies": {
-    "googleapis": "^39.2.0"
+    "googleapis": "^39.2.0",
+    "lodash": "^4.17.14"
   },
   "devDependencies": {
     "@types/jest": "^24.0.15",
+    "@types/lodash": "^4.14.136",
     "@types/node": "^12.6.0",
     "dotenv": "^8.0.0",
     "jest": "^24.8.0",
