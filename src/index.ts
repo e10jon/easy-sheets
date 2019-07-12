@@ -20,7 +20,7 @@ export default class EasySheets {
   private serviceAccountCreds: ServiceAccountCreds
   private sheetId: string
 
-  private sheets?: sheets_v4.Sheets
+  public sheets?: sheets_v4.Sheets
 
   public constructor(sheetId: string, creds64: string) {
     this.sheetId = sheetId
