@@ -1,9 +1,9 @@
 import { sheets_v4 } from 'googleapis';
 export default class EasySheets {
     private serviceAccountCreds;
-    private sheetId;
+    private spreadsheetId;
     sheets?: sheets_v4.Sheets;
-    constructor(sheetId: string, creds64: string);
+    constructor(spreadsheetId: string, creds64: string);
     addRow: (values: any[]) => Promise<boolean>;
     authorize: () => Promise<sheets_v4.Sheets>;
     clearRange: (range: string) => Promise<boolean>;

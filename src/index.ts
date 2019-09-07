@@ -18,24 +18,27 @@ interface ServiceAccountCreds {
 
 export default class EasySheets {
   private serviceAccountCreds: ServiceAccountCreds
-  private sheetId: string
+  private spreadsheetId: string
 
   public sheets?: sheets_v4.Sheets
 
-  public constructor(sheetId: string, creds64: string) {
-    this.sheetId = sheetId
+  public constructor(spreadsheetId: string, creds64: string) {
+    this.spreadsheetId = spreadsheetId
     this.serviceAccountCreds = JSON.parse(Buffer.from(creds64, 'base64').toString()) as ServiceAccountCreds
   }
 
-  public addRow = async (values: any[]): Promise<boolean> => {
+  public addRow = async (values: any[], sheet?: string): Promise<boolean> => {
     const sheets = await this.authorize()
 
+    const range = sheet ? `${sheet}!A1:A5000000` : 'A1:A5000000'
+
     await sheets.spreadsheets.values.append({
-      range: 'A1:A5000000',
+      range,
       requestBody: {values: [values]},
-      spreadsheetId: this.sheetId,
+      spreadsheetId: this.spreadsheetId,
       valueInputOption: 'USER_ENTERED',
     })
+
     return true
   }
 
@@ -64,7 +67,7 @@ export default class EasySheets {
 
     await sheets.spreadsheets.values.clear({
       range,
-      spreadsheetId: this.sheetId,
+      spreadsheetId: this.spreadsheetId,
     })
     return true
   }
@@ -74,7 +77,7 @@ export default class EasySheets {
 
     const {data: {values}} = await sheets.spreadsheets.values.get({
       range,
-      spreadsheetId: this.sheetId,
+      spreadsheetId: this.spreadsheetId,
     })
 
     if (opts && opts.headerRow && values) {
@@ -97,7 +100,7 @@ export default class EasySheets {
     await sheets.spreadsheets.values.update({
       range,
       requestBody: {values},
-      spreadsheetId: this.sheetId,
+      spreadsheetId: this.spreadsheetId,
       valueInputOption: 'USER_ENTERED',
     })
     return true

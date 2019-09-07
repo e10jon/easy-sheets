@@ -1,11 +1,11 @@
 import EasySheets from '../'
 
-const {SHEET_ID, CREDS} = process.env
+const {SPREADSHEET_ID, CREDS} = process.env
 
 let easySheets: EasySheets
 
 beforeAll(() => {
-  easySheets = new EasySheets(SHEET_ID || '', CREDS || '')
+  easySheets = new EasySheets(SPREADSHEET_ID || '', CREDS || '')
 })
 
 test('all operations', async () => {

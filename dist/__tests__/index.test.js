@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = require("../");
-const { SHEET_ID, CREDS } = process.env;
+const { SPREADSHEET_ID, CREDS } = process.env;
 let easySheets;
 beforeAll(() => {
-    easySheets = new __1.default(SHEET_ID || '', CREDS || '');
+    easySheets = new __1.default(SPREADSHEET_ID || '', CREDS || '');
 });
 test('all operations', async () => {
     // clearRange

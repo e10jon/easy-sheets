@@ -4,13 +4,13 @@ const googleapis_1 = require("googleapis");
 const lodash_1 = require("lodash");
 const util_1 = require("util");
 class EasySheets {
-    constructor(sheetId, creds64) {
+    constructor(spreadsheetId, creds64) {
         this.addRow = async (values) => {
             const sheets = await this.authorize();
             await sheets.spreadsheets.values.append({
                 range: 'A1:A5000000',
                 requestBody: { values: [values] },
-                spreadsheetId: this.sheetId,
+                spreadsheetId: this.spreadsheetId,
                 valueInputOption: 'USER_ENTERED',
             });
             return true;
@@ -35,7 +35,7 @@ class EasySheets {
             const sheets = await this.authorize();
             await sheets.spreadsheets.values.clear({
                 range,
-                spreadsheetId: this.sheetId,
+                spreadsheetId: this.spreadsheetId,
             });
             return true;
         };
@@ -43,7 +43,7 @@ class EasySheets {
             const sheets = await this.authorize();
             const { data: { values } } = await sheets.spreadsheets.values.get({
                 range,
-                spreadsheetId: this.sheetId,
+                spreadsheetId: this.spreadsheetId,
             });
             if (opts && opts.headerRow && values) {
                 const headerKeys = opts.headerRow === 'raw' ? values[0] : values[0].map(lodash_1.camelCase);
@@ -63,12 +63,12 @@ class EasySheets {
             await sheets.spreadsheets.values.update({
                 range,
                 requestBody: { values },
-                spreadsheetId: this.sheetId,
+                spreadsheetId: this.spreadsheetId,
                 valueInputOption: 'USER_ENTERED',
             });
             return true;
         };
-        this.sheetId = sheetId;
+        this.spreadsheetId = spreadsheetId;
         this.serviceAccountCreds = JSON.parse(Buffer.from(creds64, 'base64').toString());
     }
 }
