@@ -16,6 +16,8 @@ interface ServiceAccountCreds {
   type: string,
 }
 
+const buildRange = (range: string, sheet?: string) => sheet ? `${sheet}!${range}` : range
+
 export default class EasySheets {
   private serviceAccountCreds: ServiceAccountCreds
   private spreadsheetId: string
@@ -27,13 +29,11 @@ export default class EasySheets {
     this.serviceAccountCreds = JSON.parse(Buffer.from(creds64, 'base64').toString()) as ServiceAccountCreds
   }
 
-  public addRow = async (values: any[], sheet?: string): Promise<boolean> => {
+  public addRow = async (values: any[], opts: {sheet?: string} = {}): Promise<boolean> => {
     const sheets = await this.authorize()
 
-    const range = sheet ? `${sheet}!A1:A5000000` : 'A1:A5000000'
-
     await sheets.spreadsheets.values.append({
-      range,
+      range: buildRange('A1:A5000000', opts.sheet),
       requestBody: {values: [values]},
       spreadsheetId: this.spreadsheetId,
       valueInputOption: 'USER_ENTERED',
@@ -62,25 +62,26 @@ export default class EasySheets {
     return this.sheets
   }
 
-  public clearRange = async (range: string): Promise<boolean> => {
+  public clearRange = async (range: string, opts: {sheet?: string} = {}): Promise<boolean> => {
     const sheets = await this.authorize()
 
     await sheets.spreadsheets.values.clear({
-      range,
+      range: buildRange(range, opts.sheet),
       spreadsheetId: this.spreadsheetId,
     })
+
     return true
   }
 
-  public getRange = async (range: string, opts?: {headerRow: boolean | 'raw'}): Promise<any[][] | undefined> => {
+  public getRange = async (range: string, opts: {headerRow?: boolean | 'raw', sheet?: string} = {}): Promise<any[][] | undefined> => {
     const sheets = await this.authorize()
 
     const {data: {values}} = await sheets.spreadsheets.values.get({
-      range,
+      range: buildRange(range, opts.sheet),
       spreadsheetId: this.spreadsheetId,
     })
 
-    if (opts && opts.headerRow && values) {
+    if (opts.headerRow && values) {
       const headerKeys = opts.headerRow === 'raw' ? values[0] : values[0].map(camelCase)
 
       return values.slice(1).map(row => {
@@ -94,15 +95,16 @@ export default class EasySheets {
     }
   }
 
-  public updateRange = async (range: string, values: any[][]): Promise<boolean> => {
+  public updateRange = async (range: string, values: any[][], opts: {sheet?: string} = {}): Promise<boolean> => {
     const sheets = await this.authorize()
 
     await sheets.spreadsheets.values.update({
-      range,
+      range: buildRange(range, opts.sheet),
       requestBody: {values},
       spreadsheetId: this.spreadsheetId,
       valueInputOption: 'USER_ENTERED',
     })
+
     return true
   }
 }

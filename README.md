@@ -20,6 +20,23 @@ import EasySheets from 'easy-sheets'
 
 const easySheets = new EasySheets(SPREADSHEET_ID, BASE64_CREDS)
 
-# add a row
+// add a row
 await easySheets.addRow(['this', 'was easy'])
+
+// get a range as multi-dimensional array
+await easySheets.getRange('A1:B3')
+
+// get a range as an object
+await easySheets.getRange('A1:B3', {headerRow: 'raw'}))
+
+// update range
+await easySheets.updateRange('A1:B2', [['First Name', 'Last Name'], ['Tim', 'Jones']])
+
+// clear range
+await easySheets.clearRange('A1:B5000000')
+
+// multisheet operations
+// you can add {sheet} as an argument to all operations
+// example:
+await easySheets.getRange('A1:B3', {sheet: 'Sheet2'})
 ```

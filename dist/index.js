@@ -3,12 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const googleapis_1 = require("googleapis");
 const lodash_1 = require("lodash");
 const util_1 = require("util");
+const buildRange = (range, sheet) => sheet ? `${sheet}!${range}` : range;
 class EasySheets {
     constructor(spreadsheetId, creds64) {
-        this.addRow = async (values) => {
+        this.addRow = async (values, opts = {}) => {
             const sheets = await this.authorize();
             await sheets.spreadsheets.values.append({
-                range: 'A1:A5000000',
+                range: buildRange('A1:A5000000', opts.sheet),
                 requestBody: { values: [values] },
                 spreadsheetId: this.spreadsheetId,
                 valueInputOption: 'USER_ENTERED',
@@ -31,21 +32,21 @@ class EasySheets {
             }
             return this.sheets;
         };
-        this.clearRange = async (range) => {
+        this.clearRange = async (range, opts = {}) => {
             const sheets = await this.authorize();
             await sheets.spreadsheets.values.clear({
-                range,
+                range: buildRange(range, opts.sheet),
                 spreadsheetId: this.spreadsheetId,
             });
             return true;
         };
-        this.getRange = async (range, opts) => {
+        this.getRange = async (range, opts = {}) => {
             const sheets = await this.authorize();
             const { data: { values } } = await sheets.spreadsheets.values.get({
-                range,
+                range: buildRange(range, opts.sheet),
                 spreadsheetId: this.spreadsheetId,
             });
-            if (opts && opts.headerRow && values) {
+            if (opts.headerRow && values) {
                 const headerKeys = opts.headerRow === 'raw' ? values[0] : values[0].map(lodash_1.camelCase);
                 return values.slice(1).map(row => {
                     return headerKeys.reduce((obj, header, i) => {
@@ -58,10 +59,10 @@ class EasySheets {
                 return values;
             }
         };
-        this.updateRange = async (range, values) => {
+        this.updateRange = async (range, values, opts = {}) => {
             const sheets = await this.authorize();
             await sheets.spreadsheets.values.update({
-                range,
+                range: buildRange(range, opts.sheet),
                 requestBody: { values },
                 spreadsheetId: this.spreadsheetId,
                 valueInputOption: 'USER_ENTERED',
