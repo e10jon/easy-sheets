@@ -7,12 +7,15 @@ const buildRange = (range, sheet) => sheet ? `${sheet}!${range}` : range;
 class EasySheets {
     constructor(spreadsheetId, creds64) {
         this.addRow = async (values, opts = {}) => {
+            return this.addMultipleRows([values], opts);
+        };
+        this.addMultipleRows = async (values, opts = {}) => {
             const sheets = await this.authorize();
             await sheets.spreadsheets.values.append({
-                range: buildRange('A1:A5000000', opts.sheet),
-                requestBody: { values: [values] },
+                range: buildRange("A1:A5000000", opts.sheet),
+                requestBody: { values: values },
                 spreadsheetId: this.spreadsheetId,
-                valueInputOption: 'USER_ENTERED',
+                valueInputOption: "USER_ENTERED",
             });
             return true;
         };
@@ -21,13 +24,13 @@ class EasySheets {
                 const oauth2Client = new googleapis_1.google.auth.JWT({
                     email: this.serviceAccountCreds.client_email,
                     key: this.serviceAccountCreds.private_key,
-                    scopes: ['https://spreadsheets.google.com/feeds'],
+                    scopes: ["https://spreadsheets.google.com/feeds"],
                 });
                 const authorize = util_1.promisify(oauth2Client.authorize).bind(oauth2Client);
                 await authorize();
                 this.sheets = googleapis_1.google.sheets({
                     auth: oauth2Client,
-                    version: 'v4',
+                    version: "v4",
                 });
             }
             return this.sheets;
@@ -42,13 +45,13 @@ class EasySheets {
         };
         this.getRange = async (range, opts = {}) => {
             const sheets = await this.authorize();
-            const { data: { values } } = await sheets.spreadsheets.values.get({
+            const { data: { values }, } = await sheets.spreadsheets.values.get({
                 range: buildRange(range, opts.sheet),
                 spreadsheetId: this.spreadsheetId,
             });
             if (opts.headerRow && values) {
-                const headerKeys = opts.headerRow === 'raw' ? values[0] : values[0].map(lodash_1.camelCase);
-                return values.slice(1).map(row => {
+                const headerKeys = opts.headerRow === "raw" ? values[0] : values[0].map(lodash_1.camelCase);
+                return values.slice(1).map((row) => {
                     return headerKeys.reduce((obj, header, i) => {
                         obj[header] = row[i];
                         return obj;
@@ -65,12 +68,12 @@ class EasySheets {
                 range: buildRange(range, opts.sheet),
                 requestBody: { values },
                 spreadsheetId: this.spreadsheetId,
-                valueInputOption: 'USER_ENTERED',
+                valueInputOption: "USER_ENTERED",
             });
             return true;
         };
         this.spreadsheetId = spreadsheetId;
-        this.serviceAccountCreds = JSON.parse(Buffer.from(creds64, 'base64').toString());
+        this.serviceAccountCreds = JSON.parse(Buffer.from(creds64, "base64").toString());
     }
 }
 exports.default = EasySheets;
