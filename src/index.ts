@@ -1,22 +1,22 @@
-import {google, sheets_v4} from 'googleapis'
-import {JWTOptions} from 'google-auth-library'
-import {camelCase} from 'lodash'
-import {promisify} from 'util'
+import { google, sheets_v4 } from 'googleapis'
+import { JWTOptions } from 'google-auth-library'
+import { camelCase } from 'lodash'
+import { promisify } from 'util'
 
 interface ServiceAccountCreds {
-  auth_provider_x509_cert_url: string,
-  auth_uri: string,
-  client_email: string,
-  client_id: string,
-  client_x509_cert_url: string,
-  private_key: string,
-  private_key_id: string,
-  project_id: string,
-  token_uri: string,
-  type: string,
+  auth_provider_x509_cert_url: string
+  auth_uri: string
+  client_email: string
+  client_id: string
+  client_x509_cert_url: string
+  private_key: string
+  private_key_id: string
+  project_id: string
+  token_uri: string
+  type: string
 }
 
-const buildRange = (range: string, sheet?: string) => sheet ? `${sheet}!${range}` : range
+const buildRange = (range: string, sheet?: string) => (sheet ? `${sheet}!${range}` : range)
 
 export default class EasySheets {
   private serviceAccountCreds: ServiceAccountCreds
@@ -29,12 +29,12 @@ export default class EasySheets {
     this.serviceAccountCreds = JSON.parse(Buffer.from(creds64, 'base64').toString()) as ServiceAccountCreds
   }
 
-  public addRow = async (values: any[], opts: {sheet?: string} = {}): Promise<boolean> => {
+  public addRow = async (values: any[], opts: { sheet?: string } = {}): Promise<boolean> => {
     const sheets = await this.authorize()
 
     await sheets.spreadsheets.values.append({
       range: buildRange('A1:A5000000', opts.sheet),
-      requestBody: {values: [values]},
+      requestBody: { values: [values] },
       spreadsheetId: this.spreadsheetId,
       valueInputOption: 'USER_ENTERED',
     })
@@ -62,7 +62,7 @@ export default class EasySheets {
     return this.sheets
   }
 
-  public clearRange = async (range: string, opts: {sheet?: string} = {}): Promise<boolean> => {
+  public clearRange = async (range: string, opts: { sheet?: string } = {}): Promise<boolean> => {
     const sheets = await this.authorize()
 
     await sheets.spreadsheets.values.clear({
@@ -73,10 +73,12 @@ export default class EasySheets {
     return true
   }
 
-  public getRange = async (range: string, opts: {headerRow?: boolean | 'raw', sheet?: string} = {}): Promise<any[][] | undefined> => {
+  public getRange = async (range: string, opts: { headerRow?: boolean | 'raw'; sheet?: string } = {}): Promise<any[][] | undefined> => {
     const sheets = await this.authorize()
 
-    const {data: {values}} = await sheets.spreadsheets.values.get({
+    const {
+      data: { values },
+    } = await sheets.spreadsheets.values.get({
       range: buildRange(range, opts.sheet),
       spreadsheetId: this.spreadsheetId,
     })
@@ -84,7 +86,7 @@ export default class EasySheets {
     if (opts.headerRow && values) {
       const headerKeys = opts.headerRow === 'raw' ? values[0] : values[0].map(camelCase)
 
-      return values.slice(1).map(row => {
+      return values.slice(1).map((row) => {
         return headerKeys.reduce((obj, header, i) => {
           obj[header] = row[i]
           return obj
@@ -95,12 +97,12 @@ export default class EasySheets {
     }
   }
 
-  public updateRange = async (range: string, values: any[][], opts: {sheet?: string} = {}): Promise<boolean> => {
+  public updateRange = async (range: string, values: any[][], opts: { sheet?: string } = {}): Promise<boolean> => {
     const sheets = await this.authorize()
 
     await sheets.spreadsheets.values.update({
       range: buildRange(range, opts.sheet),
-      requestBody: {values},
+      requestBody: { values },
       spreadsheetId: this.spreadsheetId,
       valueInputOption: 'USER_ENTERED',
     })

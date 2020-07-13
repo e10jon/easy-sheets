@@ -1,6 +1,7 @@
 # Easy Sheets
 
 Easy Sheets is a modern, typed javascript library to access Google Sheets. It was made for 2 reasons:
+
 - to be able to do simple sheet operations using terse commands;
 - to be able to access Google API credentials as a string (which could be set as an environment variable).
 
