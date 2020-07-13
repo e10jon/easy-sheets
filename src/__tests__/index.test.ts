@@ -29,6 +29,17 @@ test('all operations', async () => {
     // addRow
     expect(await easySheets.addRow(['Bob', 'Smith'], { sheet })).toBe(true)
 
+    // add multiple rows
+    expect(
+      await easySheets.addMultipleRows(
+        [
+          ['Bob', 'Smith'],
+          ['John', 'Doe'],
+        ],
+        { sheet },
+      ),
+    ).toBe(true)
+
     // getRange
     expect(await easySheets.getRange('A1:B3', { sheet })).toStrictEqual([
       ['First Name', 'Last Name'],
@@ -48,4 +59,4 @@ test('all operations', async () => {
       { firstName: 'Bob', lastName: 'Smith' },
     ])
   }
-})
+}, 60000)

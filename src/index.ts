@@ -42,6 +42,19 @@ export default class EasySheets {
     return true
   }
 
+  public addMultipleRows = async (values: any[][], opts: { sheet?: string } = {}): Promise<boolean> => {
+    const sheets = await this.authorize()
+
+    await sheets.spreadsheets.values.append({
+      range: buildRange('A1:A5000000', opts.sheet),
+      requestBody: { values: values },
+      spreadsheetId: this.spreadsheetId,
+      valueInputOption: 'USER_ENTERED',
+    })
+
+    return true
+  }
+
   public authorize = async (): Promise<sheets_v4.Sheets> => {
     if (!this.sheets) {
       const oauth2Client = new google.auth.JWT({
