@@ -86,7 +86,7 @@ export default class EasySheets {
     return true
   }
 
-  public getRange = async (range: string, opts: { headerRow?: boolean | 'raw'; sheet?: string } = {}): Promise<any[][] | undefined> => {
+  public getRange = async (range: string, opts: { headerRow?: boolean | 'raw'; sheet?: string } = {}): Promise<any[][] | undefined | null> => {
     const sheets = await this.authorize()
 
     const {

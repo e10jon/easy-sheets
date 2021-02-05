@@ -17,7 +17,7 @@ export default class EasySheets {
     getRange: (range: string, opts?: {
         headerRow?: boolean | 'raw';
         sheet?: string;
-    }) => Promise<any[][] | undefined>;
+    }) => Promise<any[][] | undefined | null>;
     updateRange: (range: string, values: any[][], opts?: {
         sheet?: string;
     }) => Promise<boolean>;
