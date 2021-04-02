@@ -55,6 +55,27 @@ export default class EasySheets {
     return true
   }
 
+  public addSheet = async (title: string): Promise<boolean> => {
+    const sheets = await this.authorize()
+
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: this.spreadsheetId,
+      requestBody: {
+        requests: [
+          {
+            addSheet: {
+              properties: {
+                title,
+              },
+            },
+          },
+        ],
+      },
+    })
+
+    return true
+  }
+
   public authorize = async (): Promise<sheets_v4.Sheets> => {
     if (!this.sheets) {
       const oauth2Client = new google.auth.JWT({
@@ -86,7 +107,32 @@ export default class EasySheets {
     return true
   }
 
-  public getRange = async <T>(range: string, opts: { headerRow?: boolean | 'raw'; sheet?: string } = {}): Promise<T[] | unknown[][] | undefined | null> => {
+  public deleteSheet = async (sheetTitle: string): Promise<boolean> => {
+    const sheets = await this.authorize()
+
+    const sheetId = await this.getSheetId(sheetTitle)
+    if (!sheetId) return false
+
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: this.spreadsheetId,
+      requestBody: {
+        requests: [
+          {
+            deleteSheet: {
+              sheetId,
+            },
+          },
+        ],
+      },
+    })
+
+    return true
+  }
+
+  public getRange = async <T>(
+    range: string,
+    opts: { headerRow?: boolean | 'raw'; sheet?: string } = {},
+  ): Promise<T[] | unknown[][] | undefined | null> => {
     const sheets = await this.authorize()
 
     const {
@@ -121,5 +167,12 @@ export default class EasySheets {
     })
 
     return true
+  }
+
+  private getSheetId = async (sheetTitle: string): Promise<number | null | undefined> => {
+    const sheets = await this.authorize()
+    return (await sheets.spreadsheets.get({ spreadsheetId: this.spreadsheetId })).data.sheets?.find(
+      (s) => s.properties?.title === sheetTitle,
+    )?.properties?.sheetId
   }
 }

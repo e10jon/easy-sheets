@@ -40,4 +40,10 @@ await easySheets.clearRange('A1:B5000000')
 // you can add {sheet} as an argument to all operations
 // example:
 await easySheets.getRange('A1:B3', {sheet: 'Sheet2'})
+
+// add a sheet
+await easySheets.addSheet('New Sheet')
+
+// delete a sheet
+await easySheets.deleteSheet('New Sheet')
 ```

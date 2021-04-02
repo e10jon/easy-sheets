@@ -10,10 +10,12 @@ export default class EasySheets {
     addMultipleRows: (values: unknown[][], opts?: {
         sheet?: string;
     }) => Promise<boolean>;
+    addSheet: (title: string) => Promise<boolean>;
     authorize: () => Promise<sheets_v4.Sheets>;
     clearRange: (range: string, opts?: {
         sheet?: string;
     }) => Promise<boolean>;
+    deleteSheet: (sheetTitle: string) => Promise<boolean>;
     getRange: <T>(range: string, opts?: {
         headerRow?: boolean | 'raw';
         sheet?: string;
@@ -21,4 +23,5 @@ export default class EasySheets {
     updateRange: (range: string, values: unknown[][], opts?: {
         sheet?: string;
     }) => Promise<boolean>;
+    private getSheetId;
 }

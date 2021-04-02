@@ -26,6 +26,24 @@ class EasySheets {
             });
             return true;
         };
+        this.addSheet = async (title) => {
+            const sheets = await this.authorize();
+            await sheets.spreadsheets.batchUpdate({
+                spreadsheetId: this.spreadsheetId,
+                requestBody: {
+                    requests: [
+                        {
+                            addSheet: {
+                                properties: {
+                                    title,
+                                },
+                            },
+                        },
+                    ],
+                },
+            });
+            return true;
+        };
         this.authorize = async () => {
             if (!this.sheets) {
                 const oauth2Client = new googleapis_1.google.auth.JWT({
@@ -47,6 +65,25 @@ class EasySheets {
             await sheets.spreadsheets.values.clear({
                 range: buildRange(range, opts.sheet),
                 spreadsheetId: this.spreadsheetId,
+            });
+            return true;
+        };
+        this.deleteSheet = async (sheetTitle) => {
+            const sheets = await this.authorize();
+            const sheetId = await this.getSheetId(sheetTitle);
+            if (!sheetId)
+                return false;
+            await sheets.spreadsheets.batchUpdate({
+                spreadsheetId: this.spreadsheetId,
+                requestBody: {
+                    requests: [
+                        {
+                            deleteSheet: {
+                                sheetId,
+                            },
+                        },
+                    ],
+                },
             });
             return true;
         };
@@ -78,6 +115,11 @@ class EasySheets {
                 valueInputOption: 'USER_ENTERED',
             });
             return true;
+        };
+        this.getSheetId = async (sheetTitle) => {
+            var _a, _b, _c;
+            const sheets = await this.authorize();
+            return (_c = (_b = (_a = (await sheets.spreadsheets.get({ spreadsheetId: this.spreadsheetId })).data.sheets) === null || _a === void 0 ? void 0 : _a.find((s) => { var _a; return ((_a = s.properties) === null || _a === void 0 ? void 0 : _a.title) === sheetTitle; })) === null || _b === void 0 ? void 0 : _b.properties) === null || _c === void 0 ? void 0 : _c.sheetId;
         };
         this.spreadsheetId = spreadsheetId;
         this.serviceAccountCreds = JSON.parse(Buffer.from(creds64, 'base64').toString());

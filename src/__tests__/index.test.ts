@@ -8,7 +8,13 @@ beforeAll(() => {
   easySheets = new EasySheets(SPREADSHEET_ID || '', CREDS || '')
 })
 
-test('all operations', async () => {
+test('spreadsheet operations', async () => {
+  // add then delete a sheet
+  expect(await easySheets.addSheet('New Sheet')).toBeTruthy()
+  expect(await easySheets.deleteSheet('New Sheet')).toBeTruthy()
+})
+
+test('sheet operations', async () => {
   // multisheet
   for (const sheet of [undefined, 'Sheet2']) {
     // clearRange
