@@ -29,7 +29,7 @@ export default class EasySheets {
     this.serviceAccountCreds = JSON.parse(Buffer.from(creds64, 'base64').toString()) as ServiceAccountCreds
   }
 
-  public addRow = async (values: any[], opts: { sheet?: string } = {}): Promise<boolean> => {
+  public addRow = async (values: unknown[], opts: { sheet?: string } = {}): Promise<boolean> => {
     const sheets = await this.authorize()
 
     await sheets.spreadsheets.values.append({
@@ -42,7 +42,7 @@ export default class EasySheets {
     return true
   }
 
-  public addMultipleRows = async (values: any[][], opts: { sheet?: string } = {}): Promise<boolean> => {
+  public addMultipleRows = async (values: unknown[][], opts: { sheet?: string } = {}): Promise<boolean> => {
     const sheets = await this.authorize()
 
     await sheets.spreadsheets.values.append({
@@ -86,7 +86,7 @@ export default class EasySheets {
     return true
   }
 
-  public getRange = async (range: string, opts: { headerRow?: boolean | 'raw'; sheet?: string } = {}): Promise<any[][] | undefined | null> => {
+  public getRange = async <T>(range: string, opts: { headerRow?: boolean | 'raw'; sheet?: string } = {}): Promise<T[] | unknown[][] | undefined | null> => {
     const sheets = await this.authorize()
 
     const {
@@ -110,7 +110,7 @@ export default class EasySheets {
     }
   }
 
-  public updateRange = async (range: string, values: any[][], opts: { sheet?: string } = {}): Promise<boolean> => {
+  public updateRange = async (range: string, values: unknown[][], opts: { sheet?: string } = {}): Promise<boolean> => {
     const sheets = await this.authorize()
 
     await sheets.spreadsheets.values.update({

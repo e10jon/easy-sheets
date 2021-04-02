@@ -4,21 +4,21 @@ export default class EasySheets {
     private spreadsheetId;
     sheets?: sheets_v4.Sheets;
     constructor(spreadsheetId: string, creds64: string);
-    addRow: (values: any[], opts?: {
+    addRow: (values: unknown[], opts?: {
         sheet?: string;
     }) => Promise<boolean>;
-    addMultipleRows: (values: any[][], opts?: {
+    addMultipleRows: (values: unknown[][], opts?: {
         sheet?: string;
     }) => Promise<boolean>;
     authorize: () => Promise<sheets_v4.Sheets>;
     clearRange: (range: string, opts?: {
         sheet?: string;
     }) => Promise<boolean>;
-    getRange: (range: string, opts?: {
+    getRange: <T>(range: string, opts?: {
         headerRow?: boolean | 'raw';
         sheet?: string;
-    }) => Promise<any[][] | undefined | null>;
-    updateRange: (range: string, values: any[][], opts?: {
+    }) => Promise<unknown[][] | T[] | null | undefined>;
+    updateRange: (range: string, values: unknown[][], opts?: {
         sheet?: string;
     }) => Promise<boolean>;
 }

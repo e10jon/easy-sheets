@@ -54,7 +54,8 @@ test('all operations', async () => {
     ])
 
     // getRange with headerRow
-    expect(await easySheets.getRange('A1:B3', { headerRow: true, sheet })).toStrictEqual([
+    const headerRowRange = (await easySheets.getRange('A1:B3', { headerRow: true, sheet })) as { firstName: string; lastName: string }[]
+    expect(headerRowRange).toStrictEqual([
       { firstName: 'Tim', lastName: 'Jones' },
       { firstName: 'Bob', lastName: 'Smith' },
     ])
